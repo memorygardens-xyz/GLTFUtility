@@ -11,6 +11,7 @@
 		_EmissionMap ("Emission", 2D) = "black" {}
 		_EmissionColor ("Emission Color", Color) = (0,0,0,0)
 		_AlphaCutoff ("Alpha Cutoff", Range(0,1)) = 0
+		[Toggle] _UseSecondUv ("Use Second Uv", Int) = 0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -30,7 +31,7 @@
 		sampler2D _EmissionMap;
 		
 		struct Input {
-			float2 uv_MainTex;
+			float2 uv2_MainTex;
 			float2 uv_BumpMap;
 			float2 uv_MetallicGlossMap;
 			float2 uv_OcclusionMap;
@@ -44,6 +45,7 @@
 		half _BumpScale;
 		fixed4 _Color;
 		fixed4 _EmissionColor;
+		int _UseSecondUv;
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -54,7 +56,7 @@
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			fixed4 c = tex2D (_MainTex, _UseSecondUv > 0 ? IN.uv2_MainTex : IN.uv_BumpMap) * _Color;
 			o.Albedo = c.rgb * IN.color;
 			clip(c.a - _AlphaCutoff);
 			// Metallic comes from blue channel tinted by slider variables
