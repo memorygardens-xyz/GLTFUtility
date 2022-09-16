@@ -9,14 +9,17 @@ using UnityEngine.Rendering;
 using UnityEngine.Scripting;
 using Newtonsoft.Json.Linq;
 
-namespace Siccity.GLTFUtility {
+namespace Siccity.GLTFUtility
+{
 	// https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#material
-	[Preserve] public class GLTFMaterial {
+	[Preserve]
+	public class GLTFMaterial
+	{
+		private static Material _defaultMaterial;
 #if UNITY_EDITOR
 		public static Material defaultMaterial { get { return _defaultMaterial != null ? _defaultMaterial : _defaultMaterial = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Material>("Default-Material.mat"); } }
-		private static Material _defaultMaterial;
 #else
-		public static Material defaultMaterial { get { return null; } }
+		public static Material defaultMaterial { get { return _defaultMaterial; } }
 #endif
 
 		public string name;
@@ -35,7 +38,14 @@ namespace Siccity.GLTFUtility {
 			public Material material;
 		}
 
-		public IEnumerator CreateMaterial(GLTFTexture.ImportResult[] textures, ShaderSettings shaderSettings, Action<Material> onFinish) {
+		static GLTFMaterial()
+		{
+			_defaultMaterial = new Material(Shader.Find("Specular"));
+			_defaultMaterial.color = Color.white;
+		}
+
+		public IEnumerator CreateMaterial(GLTFTexture.ImportResult[] textures, ShaderSettings shaderSettings, Action<Material> onFinish)
+		{
 			Material mat = null;
 			IEnumerator en = null;
 			// Load metallic-roughness materials
