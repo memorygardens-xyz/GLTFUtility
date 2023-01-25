@@ -96,7 +96,7 @@ namespace Siccity.GLTFUtility
 				en = TryGetTexture(textures, emissiveTexture, false, tex => {
 					if (tex != null) {
 						mat.SetTexture("_EmissionMap", tex);
-						mat.EnableKeyword("_EMISSION");
+						mat.EnableKeyword("_EMISSION_MAP");
 						if (emissiveTexture.extensions != null) {
 							emissiveTexture.extensions.Apply(emissiveTexture, mat, "_EmissionMap");
 						}

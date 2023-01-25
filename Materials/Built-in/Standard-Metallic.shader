@@ -24,6 +24,8 @@
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
 
+		#pragma shader_feature _EMISSION_MAP
+
 		sampler2D _MainTex;
 		sampler2D _MetallicGlossMap;
 		sampler2D _BumpMap;
@@ -68,8 +70,12 @@
 			o.Normal = UnpackScaleNormal (tex2D (_BumpMap, IN.uv_BumpMap), _BumpScale);
 			// Ambient Occlusion comes from red channel
 			o.Occlusion = tex2D (_OcclusionMap, IN.uv_OcclusionMap).r;
-			// Emission comes from a texture tinted by color
-			o.Emission = tex2D (_EmissionMap, IN.uv_EmissionMap) * _EmissionColor;
+			#ifdef _EMISSION_MAP
+				// Emission comes from a texture tinted by color
+				o.Emission = tex2D (_EmissionMap, IN.uv_EmissionMap) * _EmissionColor;
+			#else
+				o.Emission = _EmissionColor;
+			#endif
 		}
 		ENDCG
 	}
